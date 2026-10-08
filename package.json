@@ -1,0 +1,1 @@
+{"dependencies":{"express":"^4.19.2","socket.io":"^4.7.5"},"description":"Raja Rani (കള്ളൻ പോലീസ്) — real-time multiplayer card game. Node.js + Express + Socket.IO, no-build frontend.","engines":{"node":">=18"},"license":"MIT","main":"server.js","name":"raja-rani","scripts":{"start":"node server.js"},"version":"1.0.0"}

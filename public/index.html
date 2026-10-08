@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Raja Rani — കള്ളൻ പോലീസ്</title>
+<!-- Noto Sans Malayalam so Malayalam names render on every phone -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Noto+Sans+Malayalam:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ HOME ============ -->
+  <section id="screen-home" class="screen active">
+    <div class="hero-logo">👑</div>
+    <h1 class="game-title">Raja Rani</h1>
+    <p class="game-sub"><span class="ml">കള്ളൻ പോലീസ്</span> · Thief &amp; Police party game</p>
+
+    <div class="card-panel">
+      <label class="field-label" for="home-name">Your display name <span class="hint">(English or മലയാളം)</span></label>
+      <input id="home-name" class="text-input ml-font" maxlength="24" placeholder="e.g. Arjun / അർജുൻ" autocomplete="off">
+      <div class="btn-row">
+        <button id="btn-create" class="btn btn-primary">🎲 Create room</button>
+      </div>
+      <div class="divider"><span>or</span></div>
+      <label class="field-label" for="home-code">Room code</label>
+      <input id="home-code" class="text-input code-input" maxlength="6" placeholder="ABC123" autocomplete="off" autocapitalize="characters">
+      <div class="btn-row">
+        <button id="btn-join" class="btn btn-secondary">🚪 Join room</button>
+      </div>
+      <p id="home-error" class="error-msg" hidden></p>
+    </div>
+    <p class="footnote">Minimum 5 players · everyone plays from their own phone</p>
+  </section>
+
+  <!-- ============ LOBBY ============ -->
+  <section id="screen-lobby" class="screen">
+    <header class="topbar">
+      <div>
+        <div class="room-code-label">ROOM CODE</div>
+        <div class="room-code" id="lobby-code">------</div>
+      </div>
+      <button id="btn-copy-link" class="btn btn-small">🔗 Copy invite link</button>
+    </header>
+
+    <div class="card-panel">
+      <div class="lobby-name-row">
+        <div>
+          <div class="field-label">Your name</div>
+          <div id="lobby-myname" class="ml-font big-name"></div>
+        </div>
+        <button id="btn-edit-name" class="btn btn-small">✏️ Edit</button>
+      </div>
+      <div id="name-editor" hidden>
+        <input id="name-edit-input" class="text-input ml-font" maxlength="24">
+        <div class="btn-row">
+          <button id="btn-save-name" class="btn btn-primary btn-small">Save</button>
+          <button id="btn-cancel-name" class="btn btn-small">Cancel</button>
+        </div>
+        <p class="hint">You can type in Malayalam (മലയാളം) — it works on every phone. Names lock when the game starts.</p>
+      </div>
+    </div>
+
+    <div class="card-panel">
+      <h2>Players (<span id="lobby-count">0</span>)</h2>
+      <ul id="lobby-players" class="player-list"></ul>
+      <p id="lobby-waiting" class="hint">Waiting for players… need at least 5 to start.</p>
+    </div>
+
+    <div id="host-controls" class="card-panel" hidden>
+      <h2>Host controls</h2>
+      <div class="btn-row">
+        <button id="btn-customize" class="btn btn-secondary">🃏 Customize cards</button>
+        <button id="btn-start" class="btn btn-primary" disabled>▶ Start round</button>
+      </div>
+    </div>
+    <p id="lobby-guest-note" class="footnote" hidden>Waiting for the host to start the round…</p>
+  </section>
+
+  <!-- ============ GAME TABLE ============ -->
+  <section id="screen-game" class="screen">
+    <div id="round-banner" class="round-banner">Round 1</div>
+    <div id="table" class="table"></div>
+
+    <div id="my-card-zone">
+      <p class="hint">Your card — tap to flip (only you can see it)</p>
+      <div id="my-card" class="card facedown" role="button" tabindex="0" aria-label="Your card, tap to flip">
+        <div class="card-inner">
+          <div class="card-face card-back"><span class="back-symbol">👑</span></div>
+          <div class="card-face card-front" id="my-card-front"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button id="btn-declare" class="btn btn-police">🚨 I am the Police</button>
+    </div>
+    <p id="game-status" class="status-line"></p>
+
+    <!-- Police picks the thief -->
+    <div id="guess-panel" class="card-panel" hidden>
+      <h2>🕵️ Who is the Thief? <span class="hint">Tap their name</span></h2>
+      <ul id="guess-list" class="player-list guess"></ul>
+    </div>
+  </section>
+
+  <!-- ============ REVEAL / LEADERBOARD ============ -->
+  <section id="screen-reveal" class="screen">
+    <div id="result-banner" class="result-banner"></div>
+    <h2 class="section-title">Round results</h2>
+    <div id="reveal-cards" class="reveal-grid"></div>
+    <h2 class="section-title">🏆 Leaderboard <span id="totals-round" class="hint"></span></h2>
+    <ol id="leaderboard" class="leaderboard"></ol>
+    <div class="action-bar">
+      <button id="btn-next-round" class="btn btn-primary" hidden>▶ Next round</button>
+      <button id="btn-end-game" class="btn btn-danger">🛑 End game</button>
+    </div>
+  </section>
+
+  <!-- ============ FINAL ============ -->
+  <section id="screen-final" class="screen">
+    <div class="hero-logo">🏆</div>
+    <h1 class="game-title">Game over!</h1>
+    <p id="final-winner" class="winner-line"></p>
+    <ol id="final-board" class="leaderboard"></ol>
+    <div class="action-bar">
+      <button id="btn-play-again" class="btn btn-primary" hidden>🔁 Play again</button>
+      <button id="btn-new-room" class="btn btn-secondary">🏠 New room</button>
+    </div>
+  </section>
+</div>
+
+<!-- Customize cards modal (host only) -->
+<div id="modal-customize" class="modal" hidden>
+  <div class="modal-box">
+    <h2>🃏 Customize cards</h2>
+    <p class="hint">Change names per role. Malayalam shows large with English below. Points are fixed.</p>
+    <div id="customize-list"></div>
+    <div class="btn-row">
+      <button id="btn-reset-cards" class="btn btn-small">↩ Reset to default</button>
+      <button id="btn-close-customize" class="btn btn-primary">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Name editor is inline in lobby; end-game vote modal -->
+<div id="modal-vote" class="modal" hidden>
+  <div class="modal-box">
+    <h2>🛑 End game?</h2>
+    <p id="vote-text"></p>
+    <div class="vote-count"><span id="vote-num">1</span> / <span id="vote-needed">4</span> approvals</div>
+    <div class="btn-row">
+      <button id="btn-approve-end" class="btn btn-primary">✅ Approve</button>
+      <button id="btn-close-vote" class="btn btn-small">Keep playing</button>
+    </div>
+  </div>
+</div>
+
+<!-- Voice chat bar -->
+<div id="voice-bar" hidden>
+  <div id="speaker-indicator" class="speaker-idle">🔇 Voice</div>
+  <button id="btn-ptt" class="btn btn-ptt">🎙 Hold to talk</button>
+  <button id="btn-mic-settings" class="btn btn-small" title="Voice settings">⚙️</button>
+</div>
+<div id="modal-voice" class="modal" hidden>
+  <div class="modal-box">
+    <h2>🎙 Voice settings</h2>
+    <p class="hint">Push-to-talk: only one person speaks at a time. The host can interrupt and mute anyone.</p>
+    <div id="voice-players"></div>
+    <div class="btn-row"><button id="btn-close-voice" class="btn btn-primary">Done</button></div>
+  </div>
+</div>
+
+<!-- Sound controls -->
+<div id="sound-bar">
+  <button id="btn-sound" class="btn btn-small" title="Sound on/off">🔊</button>
+  <input id="volume" type="range" min="0" max="100" value="70" title="Volume">
+</div>
+
+<div id="fx-flash"></div>
+<canvas id="confetti"></canvas>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/audio.js"></script>
+<script src="/js/voice.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
